@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Claude Chat Export Viewer
 
-## Getting Started
+A tool for exploring and viewing Claude AI chat exports. This project provides utilities to extract, process, and view conversations from Claude chat exports in a clean web interface.
 
-First, run the development server:
+## Features
 
+- Extract individual conversations from Claude export files
+- Clean and normalize conversation data
+- View conversations in a user-friendly web interface
+- Support for attachments and file content
+- Chronological message ordering
+
+## Prerequisites
+
+- Node.js and npm/bun
+- Python 3.x
+- jq (command-line JSON processor)
+- Claude chat export file (conversations.json)
+
+## Installation
+
+1. Clone this repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/AdjectiveAllison/claude-chat-viewer.git
+cd claude-chat-viewer
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+bun install  # or npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Exploring Available Conversations
 
-## Learn More
+First, explore your conversations.json file to find the chat you want to view:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# List all conversation names and their indices
+jq -r 'to_entries | .[] | "\(.key): \(.value.name)"' conversations.json
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Search conversations by name
+jq -r 'to_entries | .[] | select(.value.name | contains("specific text")) | "\(.key): \(.value.name)"' conversations.json
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Get details about a specific conversation
+jq '.[123].name' conversations.json  # Replace 123 with the conversation index
+```
 
-## Deploy on Vercel
+### 2. Extracting a Conversation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Once you've identified the conversation you want to view:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# Extract conversation by index (replace 123 with your desired conversation index)
+jq '.[123]' conversations.json > export_chat.json
+```
+
+### 3. Processing the Conversation
+
+Use the conversion script to clean and format the conversation data:
+
+```bash
+python3 chat_convert.py export_chat.json chat_filtered.json
+```
+
+This script:
+- Sorts messages chronologically
+- Removes sensitive data
+- Normalizes the format
+- Processes attachments
+
+### 4. Viewing the Conversation
+
+Start the web interface:
+
+```bash
+bun run dev  # or npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser and upload your processed chat_filtered.json file.
+
+## Web Interface Features
+
+- Clean, threaded conversation view
+- Timestamp display
+- Expandable attachments
+- Code highlighting
+- Responsive design
+
+## Development
+
+This is a [Next.js](https://nextjs.org) project with TypeScript. Key files:
+
+- `chat_convert.py`: Conversation processing script
+- `components/ChatViewer.tsx`: Main conversation display component
+- `app/page.tsx`: File upload and main page component
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+[MIT]
