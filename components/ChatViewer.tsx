@@ -43,14 +43,29 @@ const ChatViewer = ({ initialData }: { initialData: ChatData }) => {
     return date.toLocaleString();
   };
 
+  // Function to preserve newlines while removing excess whitespace
+  const formatMessageText = (text: string) => {
+    // Replace single newlines with <br/> and preserve double newlines as paragraphs
+    return text.split('\n\n').map((paragraph, i) => (
+      <p key={i} className="mb-4 last:mb-0">
+        {paragraph.split('\n').map((line, j) => (
+          <React.Fragment key={j}>
+            {line}
+            {j !== paragraph.split('\n').length - 1 && <br />}
+          </React.Fragment>
+        ))}
+      </p>
+    ));
+  };
+
   const Message = ({ message }: { message: ChatData['chat_messages'][0] }) => {
     const [expanded, setExpanded] = React.useState(false);
     
     return (
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-start gap-4">
+      <div className="py-8 px-4 border-b border-gray-200 first:pt-4 last:border-0">
+        <div className="flex items-start gap-4 max-w-4xl mx-auto">
           {/* Sender icon/avatar */}
-          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
             <span className="text-sm font-medium">
               {message.sender === 'human' ? 'H' : 'A'}
             </span>
@@ -59,7 +74,7 @@ const ChatViewer = ({ initialData }: { initialData: ChatData }) => {
           {/* Message content */}
           <div className="flex-1 min-w-0">
             {/* Header */}
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-4">
               <span className="font-medium">
                 {message.sender === 'human' ? 'Human' : 'Assistant'}
               </span>
@@ -70,13 +85,13 @@ const ChatViewer = ({ initialData }: { initialData: ChatData }) => {
             </div>
 
             {/* Text content */}
-            <div className="prose prose-sm max-w-none">
-              {message.text}
+            <div className="prose prose-sm max-w-none space-y-4">
+              {formatMessageText(message.text)}
             </div>
 
             {/* Attachments */}
             {message.attachments?.length > 0 && (
-              <div className="mt-4">
+              <div className="mt-6">
                 <div className="flex items-center gap-2 text-sm text-gray-700 mb-2">
                   <button 
                     onClick={() => setExpanded(!expanded)}
@@ -114,7 +129,7 @@ const ChatViewer = ({ initialData }: { initialData: ChatData }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow">
+    <div className="max-w-5xl mx-auto bg-white rounded-lg shadow">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <h1 className="text-xl font-semibold">{initialData.name}</h1>
@@ -124,7 +139,7 @@ const ChatViewer = ({ initialData }: { initialData: ChatData }) => {
       </div>
 
       {/* Messages */}
-      <div>
+      <div className="divide-y divide-gray-200">
         {initialData.chat_messages.map((message, i) => (
           <Message key={i} message={message} />
         ))}
