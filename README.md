@@ -115,3 +115,9 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 [MIT]
+
+
+## TODOs
+
+- Actually add the MIT license properly instead of just saying "\[MIT\]"
+- Does it actually highlight code? I sorta doubt it. Make visualization better.
