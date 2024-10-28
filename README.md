@@ -80,6 +80,18 @@ bun run dev  # or npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser and upload your processed chat_filtered.json file.
 
+### Example Usage
+
+1. Export your chat data from Claude's web interface by going to Profile > Account > Export Data:
+![Export Data Button](export_data.png)
+
+2. Process your exported conversations using the Python script as described above.
+
+3. Upload the processed JSON file to the web viewer:
+![Chat Viewer Interface](example_filtered_chat_view.png)
+
+An example of a processed chat file is included in the repository as `example-filtered-chat.json` for reference.
+
 ## Web Interface Features
 
 - Clean, threaded conversation view
